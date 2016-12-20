@@ -151,6 +151,11 @@ namespace ParkitectNexus.Client.Base.Pages
             DisplayNameChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        public void HandleSizeUpdate (float width, float height)
+        {
+//            throw new NotImplementedException ();
+        }
+
         #region Implementation of IPageView
 
         public string DisplayName

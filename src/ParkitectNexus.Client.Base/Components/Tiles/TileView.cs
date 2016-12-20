@@ -23,9 +23,9 @@ using Xwt;
 using ParkitectNexus.Data;
 using Xwt.Drawing;
 
-namespace ParkitectNexus.Client.Base.Tiles
+namespace ParkitectNexus.Client.Base.Components.Tiles
 {
-    public abstract class LoadableDataTileView : ScrollView, IPresenter, IPageView
+    public class TileView : ScrollView
     {
         private readonly ILogger _log;
         private readonly VBox _box;
@@ -36,16 +36,22 @@ namespace ParkitectNexus.Client.Base.Tiles
         private Size _tileSize = new Size (100, 100);
         private CancellationTokenSource _tokenSource;
 
-        protected LoadableDataTileView(ILogger log, string displayName)
-        {
-            _log = log;
-            if (displayName == null)
-                throw new ArgumentNullException (nameof (displayName));
-            DisplayName = displayName;
 
-            Content = _box = new VBox ();
-            PushNewRow ();
+        private readonly TileQuery _tileQuery;
+        public  delegate  IEnumerable<Tile>  TileQuery(CancellationToken token);
+
+        public TileView(ILogger log, TileQuery query)
+        {
+
+
+                _log = log;
+            _tileQuery = query;
+
+            Content = _box = new VBox();
+
+            //PushNewRow ();
             RefreshTiles ();
+
         }
 
         private void PushNewRow()
@@ -65,7 +71,6 @@ namespace ParkitectNexus.Client.Base.Tiles
             PushNewRow ();
         }
 
-        protected abstract Task<IEnumerable<Tile>> LoadTiles (CancellationToken cancellationToken);
 
         private int CalculateButtonsPerRow(float width)
         {
@@ -75,15 +80,20 @@ namespace ParkitectNexus.Client.Base.Tiles
 
         public async void RefreshTiles()
         {
-            // Cancel previous loads
-            if (_tokenSource != null) {
-                _tokenSource.Cancel ();
+
+            if (_tokenSource != null)
+            {
+                _tokenSource.Cancel();
 
                 while (_tokenSource != null)
-                    await Task.Delay (1);
+                    Thread.Sleep(1000);
             }
+            _tokenSource = new CancellationTokenSource();
+
+
 
             Spinner spinner = null;
+
 
             Application.Invoke (() => {
                 // Clear controls
@@ -101,13 +111,16 @@ namespace ParkitectNexus.Client.Base.Tiles
             while (spinner == null)
                 await Task.Delay (5);
 
+
             _buttonsPerRow = CalculateButtonsPerRow ((float)Size.Width);
             var i = 0;
 
-            _tokenSource = new CancellationTokenSource ();
+
 
             try {
-                var tiles = await LoadTiles (_tokenSource.Token);
+                //IEnumerable<Tile> tiles =  await Task.Factory.StartNew<IEnumerable<Tile>> (() => this._tileQuery(_tokenSource.Token),_tokenSource.Token);
+                                                                               //var tiles = await new Task<IEnumerable<Tile>>( () => this._tileQuery(_tokenSource.Token),_tokenSource.Token);//(_tokenSource.Token);// LoadTiles (_tokenSource.Token);
+                var tiles = this._tileQuery(_tokenSource.Token);
 
                 Application.Invoke (() => {
                     foreach (var tile in tiles) {
@@ -120,18 +133,18 @@ namespace ParkitectNexus.Client.Base.Tiles
                         }
 
                         try {
-                            Xwt.Drawing.Image image = tile.Image?.ToXwtImage ()?.ScaleToSize (100);
+                            var image = tile.Image?.ScaleToSize (100);
                             Widget widget = null;
 
-                            if (ParkitectNexus.Data.Utilities.OperatingSystem.Detect() == SupportedOperatingSystem.Linux){
+                            if (ParkitectNexus.Data.Utilities.OperatingSystem.Detect () == SupportedOperatingSystem.Linux) {
                                 if (image != null) {
-                                    Xwt.Drawing.Image lighterImage = image.WithAlpha(.7f);
+                                    var lighterImage = image.WithAlpha (.7f);
                                     var clickableImage = new ImageView (image);
                                     clickableImage.ButtonPressed += (sender, args) => tile.ClickAction ();
-                                   
+
                                     clickableImage.MouseEntered += (object sender, EventArgs e) => {
                                         ((ImageView)sender).Image = lighterImage;
-                                        ((Widget)sender).BackgroundColor = Color.FromBytes(255,255,255);
+                                        ((Widget)sender).BackgroundColor = Color.FromBytes (255, 255, 255);
                                     };
                                     clickableImage.MouseExited += (object sender, EventArgs e) => {
                                         ((ImageView)sender).Image = image;
@@ -139,16 +152,14 @@ namespace ParkitectNexus.Client.Base.Tiles
                                     };
 
                                     widget = clickableImage;
-                                }
-                                else
-                                {
-                                    var label = new Label(tile.Text);
+                                } else {
+                                    var label = new Label (tile.Text);
                                     label.ButtonPressed += (sender, args) => tile.ClickAction ();
                                     label.Wrap = WrapMode.Word;
                                     label.TextAlignment = Alignment.Center;
-                                   
+
                                     label.MouseEntered += (object sender, EventArgs e) => {
-                                        ((Widget)sender).BackgroundColor = Color.FromBytes(255,255,255);
+                                        ((Widget)sender).BackgroundColor = Color.FromBytes (255, 255, 255);
                                     };
                                     label.MouseExited += (object sender, EventArgs e) => {
                                         ((Widget)sender).BackgroundColor = tile.BackgroundColor;
@@ -158,9 +169,7 @@ namespace ParkitectNexus.Client.Base.Tiles
 
                                 }
 
-                            }
-                            else
-                            {
+                            } else {
                                 var button = new Button (image) {
                                     Label = tile.Image == null ? tile.Text : null,
                                     TooltipText = tile.Text,
@@ -174,7 +183,7 @@ namespace ParkitectNexus.Client.Base.Tiles
                             widget.WidthRequest = 100;
                             widget.HeightRequest = 100;
                             widget.MinWidth = 0;
-                            widget.BackgroundColor= tile.BackgroundColor;
+                            widget.BackgroundColor = tile.BackgroundColor;
 
                             _buttons.Add (widget);
                             _rows.Peek ().PackStart (widget);
@@ -187,12 +196,20 @@ namespace ParkitectNexus.Client.Base.Tiles
 
                     Content = _box;
                 });
-            } catch (TaskCanceledException) {
-            } catch (OperationCanceledException) {
+            } catch (TaskCanceledException e) {
+                _log.WriteException (e);
+            } catch (OperationCanceledException e) {
+                _log.WriteException (e);
+            } catch (Exception e) {
+                 _log.WriteException (e);
             } finally {
                 _tokenSource?.Dispose ();
                 _tokenSource = null;
             }
+
+
+
+
         }
 
         public void HandleSizeUpdate(float width)
@@ -236,12 +253,6 @@ namespace ParkitectNexus.Client.Base.Tiles
 
         #endregion
 
-        #region Implementation of IPageView
 
-        public string DisplayName { get; }
-
-        public event EventHandler DisplayNameChanged;
-
-        #endregion
     }
 }

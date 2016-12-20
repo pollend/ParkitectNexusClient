@@ -1,4 +1,4 @@
-// ParkitectNexusClient
+﻿// ParkitectNexusClient
 // Copyright (C) 2016 ParkitectNexus, Tim Potze
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -11,19 +11,28 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using ParkitectNexus.Data.Assets;
-using ParkitectNexus.Data.Game;
-using ParkitectNexus.Data.Presenter;
-using ParkitectNexus.Data.Utilities;
-using ParkitectNexus.Data.Web;
+using System;
+using Xwt.Drawing;
 
-namespace ParkitectNexus.Client.Base.Pages
+namespace ParkitectNexus.Client.Base.Components.Tiles
 {
-    public class SavegamesPageView : AssetsPageView
+    public class Tile
     {
-        public SavegamesPageView(IParkitect parkitect, IWebsite website, ILogger log, IPresenter parent)
-            : base(parkitect, website, log, AssetType.Savegame, parent, "Savegames")
+        public Tile(Image image, string text, Action clickAction)
         {
+            if (clickAction == null) throw new ArgumentNullException(nameof(clickAction));
+            Image = image;
+            Text = text;
+            ClickAction = clickAction;
         }
+
+        // TODO better use xwt image
+        public Image Image { get; }
+
+        public string Text { get; }
+
+        public Action ClickAction { get; }
+
+        public Xwt.Drawing.Color BackgroundColor { get; set; } = Xwt.Drawing.Color.FromBytes(45, 137, 239);
     }
 }

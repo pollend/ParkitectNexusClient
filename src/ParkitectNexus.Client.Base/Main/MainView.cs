@@ -22,34 +22,34 @@ namespace ParkitectNexus.Client.Base.Main
     public class MainView : VBox, IPresenter
     {
         private readonly MainNotebook _notebook;
-        private readonly SidebarContainer _sidebarContainer;
+        //private readonly SidebarContainer _sidebarContainer;
 
         public MainView(IPresenterFactory presenterFactory)
         {
             _notebook = presenterFactory.InstantiatePresenter<MainNotebook>();
-            _notebook.Add(presenterFactory.InstantiatePresenter<MenuPageView>(this));
-            _notebook.Add(presenterFactory.InstantiatePresenter<ModsPageView>(this));
-            _notebook.Add(presenterFactory.InstantiatePresenter<BlueprintsPageView>(this));
-            _notebook.Add(presenterFactory.InstantiatePresenter<SavegamesPageView>(this));
-            _notebook.Add(presenterFactory.InstantiatePresenter<ScenariosPageView>(this));
+            _notebook.Add(presenterFactory.InstantiatePresenter<MenuPage>(this));
+            _notebook.Add(presenterFactory.InstantiatePresenter<AssetModPage>(this));
+            _notebook.Add(presenterFactory.InstantiatePresenter<AssetBlueprintPage>(this));
+            _notebook.Add(presenterFactory.InstantiatePresenter<AssetSavegamePage>(this));
+            _notebook.Add(presenterFactory.InstantiatePresenter<AssetScenarioPage>(this));
             _notebook.Add(presenterFactory.InstantiatePresenter<TasksPageView>(this));
 
             PackStart(presenterFactory.InstantiatePresenter<MainHeaderView>());
 
-            var sideBox = new VBox
+           /* var sideBox = new VBox
             {
                 MinWidth = 280,
                 WidthRequest = 280
             };
 
-            _sidebarContainer = new SidebarContainer();
+            /*_sidebarContainer = new SidebarContainer();
             sideBox.PackStart(_sidebarContainer, true, true);
             var box = new HBox();
 
             box.PackStart(_notebook, true);
-            box.PackEnd(sideBox);
+            box.PackEnd(sideBox);*/
 
-            PackStart(box, true, true);
+            PackStart(_notebook, true, true);
 
             _notebook.HandleSizeChangeOnTabChange = true;
             _notebook.HandleSizeUpdate();
@@ -68,10 +68,10 @@ namespace ParkitectNexus.Client.Base.Main
             return false;
         }
 
-        public void ShowSidebarWidget(string name, Widget widget)
+        /*public void ShowSidebarWidget(string name, Widget widget)
         {
             _sidebarContainer.ShowWidget(name, widget);
-        }
+        }*/
 
         protected override void OnBoundsChanged()
         {

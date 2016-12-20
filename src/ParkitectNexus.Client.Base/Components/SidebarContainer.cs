@@ -11,6 +11,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using System;
+using System.Runtime.Remoting.Channels;
 using Xwt;
 using Xwt.Drawing;
 
@@ -22,6 +24,8 @@ namespace ParkitectNexus.Client.Base.Components
         private readonly Button _closeButton;
         private readonly HBox _closeButtonBox;
 
+        public EventHandler OnSidebarClosed;
+
         public SidebarContainer()
         {
             _closeButtonBox = new HBox();
@@ -32,7 +36,13 @@ namespace ParkitectNexus.Client.Base.Components
                 Font = Font.SystemFont.WithSize(20).WithStretch(FontStretch.UltraCondensed),
                 ImagePosition = ContentPosition.Left
             };
-            _closeButton.Clicked += (sender, args) => Clear();
+            _closeButton.Clicked += (sender, args) =>
+            {
+                Clear();
+                if(OnSidebarClosed != null)
+                    OnSidebarClosed.Invoke(sender,args);
+
+            };
             _closeButtonBox.PackStart(_closeButton);
         }
 
@@ -49,4 +59,6 @@ namespace ParkitectNexus.Client.Base.Components
             }
         }
     }
+
+
 }

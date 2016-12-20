@@ -18,6 +18,7 @@ namespace ParkitectNexus.Client.Base.Pages
     public interface IPageView
     {
         string DisplayName { get; }
+        void HandleSizeUpdate(float width, float height);
 
         event EventHandler DisplayNameChanged;
     }

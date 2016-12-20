@@ -25,7 +25,7 @@ namespace ParkitectNexus.Data.Assets
         /// <summary>
         ///     A savegame.
         /// </summary>
-        [AssetInfo("text/plain")] Savegame,
+        [AssetInfo("application/x-gzip")] Savegame,
 
         /// <summary>
         ///     A blueprint.

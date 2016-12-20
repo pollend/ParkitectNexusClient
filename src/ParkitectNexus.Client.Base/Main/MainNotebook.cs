@@ -14,7 +14,6 @@
 using System;
 using System.Linq;
 using ParkitectNexus.Client.Base.Pages;
-using ParkitectNexus.Client.Base.Tiles;
 using ParkitectNexus.Data.Presenter;
 using Xwt;
 
@@ -56,12 +55,12 @@ namespace ParkitectNexus.Client.Base.Main
         {
             foreach (var tab in Tabs)
             {
-                var loadableTilesView = tab.Child as LoadableDataTileView;
+                var loadableTilesView = tab.Child as IPageView;
 
-                loadableTilesView?.HandleSizeUpdate((float) Size.Width);
+                loadableTilesView?.HandleSizeUpdate((float)Size.Height,(float) Size.Width);
 
-                var vvv = tab.Child as TasksPageView;
-                vvv?.HandleSizeChange();
+                //var vvv = tab.Child as TasksPageView;
+                //vvv?.HandleSizeChange();
             }
         }
 
