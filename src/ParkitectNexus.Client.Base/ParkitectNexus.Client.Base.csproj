@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="Fragments\TileFragmentView.cs" />
     <Compile Include="IApp.cs" />
     <Compile Include="ModLoaderUtil.cs" />
     <Compile Include="Pages\AssetsPageView.cs" />

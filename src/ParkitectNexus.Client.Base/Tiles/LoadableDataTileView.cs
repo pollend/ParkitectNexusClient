@@ -120,12 +120,12 @@ namespace ParkitectNexus.Client.Base.Tiles
                         }
 
                         try {
-                            Xwt.Drawing.Image image = tile.Image?.ToXwtImage ()?.ScaleToSize (100);
+                            Image image = tile.Image?.ToXwtImage ()?.ScaleToSize (100);
                             Widget widget = null;
 
                             if (ParkitectNexus.Data.Utilities.OperatingSystem.Detect() == SupportedOperatingSystem.Linux){
                                 if (image != null) {
-                                    Xwt.Drawing.Image lighterImage = image.WithAlpha(.7f);
+                                    Image lighterImage = image.WithAlpha(.7f);
                                     var clickableImage = new ImageView (image);
                                     clickableImage.ButtonPressed += (sender, args) => tile.ClickAction ();
                                    
