@@ -28,6 +28,7 @@ namespace ParkitectNexus.Client.Base.Main
         {
             _notebook = presenterFactory.InstantiatePresenter<MainNotebook>();
             _notebook.Add(presenterFactory.InstantiatePresenter<MenuPage>(this));
+            _notebook.Add(presenterFactory.InstantiatePresenter<AssetSearchPage>(this));
             _notebook.Add(presenterFactory.InstantiatePresenter<AssetModPage>(this));
             _notebook.Add(presenterFactory.InstantiatePresenter<AssetBlueprintPage>(this));
             _notebook.Add(presenterFactory.InstantiatePresenter<AssetSavegamePage>(this));
@@ -68,10 +69,6 @@ namespace ParkitectNexus.Client.Base.Main
             return false;
         }
 
-        /*public void ShowSidebarWidget(string name, Widget widget)
-        {
-            _sidebarContainer.ShowWidget(name, widget);
-        }*/
 
         protected override void OnBoundsChanged()
         {
