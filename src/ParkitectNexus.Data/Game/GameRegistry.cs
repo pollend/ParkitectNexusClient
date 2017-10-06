@@ -15,8 +15,8 @@ using System;
 using ParkitectNexus.Data.Game.Linux;
 using ParkitectNexus.Data.Game.MacOSX;
 using ParkitectNexus.Data.Game.Windows;
-using StructureMap;
 using OperatingSystem = ParkitectNexus.Data.Utilities.OperatingSystem;
+using Registry = StructureMap.Registry;
 
 namespace ParkitectNexus.Data.Game
 {

@@ -63,7 +63,7 @@ namespace ParkitectNexus.Client.Base
             _window = _presenterFactory.InstantiatePresenter<MainWindow>();
             _window.Show();
 
-            var update = _updateManager.CheckForUpdates<App>();
+            var update = _updateManager.CheckForUpdates<App>().Result;
             if (update != null)
             {
                 if (
